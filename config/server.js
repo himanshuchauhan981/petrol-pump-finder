@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 
 const app = express();
@@ -10,6 +11,9 @@ require('../db').connection;
 
 const host = process.env.HOST;
 const port = process.env.PORT;
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.use('/', routes());
 

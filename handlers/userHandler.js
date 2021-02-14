@@ -33,7 +33,10 @@ const userHandler = {
 		}
 	},
 
-	updateUserProfile: async () => {},
+	saveUserProfile: async (filename, userId) => {
+		await user.findByIdAndUpdate(userId, { profileImage: filename });
+		return { status: 200, msg: 'Profile image updated successfully' };
+	},
 };
 
 module.exports = userHandler;
