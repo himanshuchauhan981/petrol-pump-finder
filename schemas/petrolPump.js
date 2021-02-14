@@ -17,7 +17,6 @@ const petrolPumpSchema = new Schema({
 	},
 	state: String,
 	city: String,
-	dealer: String,
 });
 
 module.exports = mongoose.model('petrolPump', petrolPumpSchema);

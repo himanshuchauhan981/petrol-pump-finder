@@ -13,6 +13,21 @@ mongoose.connect(url, (err, conn) => {
 	}
 });
 
+const customerData = [
+	{
+		email: 'ishan199@gmail.com',
+		password: 'ishan00',
+		firstName: 'Ishan',
+		lastName: 'Ahuja',
+	},
+	{
+		email: 'krisha.khatri18@gmail.com',
+		password: 'krishakhatri0018',
+		firstName: 'Krisha',
+		lastName: 'Khatri',
+	},
+];
+
 const petrolPumpData = [
 	{
 		state: 'Punjab',
@@ -25,7 +40,8 @@ const petrolPumpData = [
 			type: 'Point',
 			coordinates: [77.4520708, 28.68467],
 		},
-		dealer: 'Mr. Ram Lal Mal',
+		firstName: 'Ram lal',
+		lastName: 'Mal',
 	},
 	{
 		state: 'Punjab',
@@ -38,7 +54,8 @@ const petrolPumpData = [
 			type: 'Point',
 			coordinates: [77.4520708, 20.68467],
 		},
-		dealer: 'Ramni Ranjan',
+		firstName: 'Ramni',
+		lastName: 'Ranjan',
 	},
 	{
 		state: 'Punjab',
@@ -51,7 +68,8 @@ const petrolPumpData = [
 			type: 'Point',
 			coordinates: [77.4520708, 40.68467],
 		},
-		dealer: 'Balwinder Kaur',
+		firstName: 'Balwinder',
+		lastName: 'Kaur',
 	},
 	{
 		state: 'Punjab',
@@ -64,7 +82,8 @@ const petrolPumpData = [
 		},
 		email: 'gschawla98@gmail.com',
 		password: 'gschawla0019',
-		dealer: 'G.S. Chawla',
+		firstName: 'G.S.',
+		lastName: 'Chawla',
 	},
 	{
 		state: 'Punjab',
@@ -76,7 +95,8 @@ const petrolPumpData = [
 		},
 		email: 'tejindersingh12@gmail.com',
 		password: 'tejinder1111',
-		dealer: 'Tejinder Singh',
+		firstName: 'Tejinder',
+		lastName: 'Singh',
 	},
 ];
 
@@ -105,9 +125,11 @@ async function createMockData() {
 		let data = petrolPumpData[i];
 		let password = bcrypt.hashSync(data['password'], salt);
 		let userObj = new user({
-			email: data['email'],
+			email: data.email,
 			password: password,
 			accountType: 'dealer',
+			firstName: data.firstName,
+			lastName: data.lastName,
 		});
 
 		let newUser = await userObj.save();
@@ -121,6 +143,20 @@ async function createMockData() {
 			userId: newUser._id,
 		});
 		await petrolPumpObj.save();
+	}
+
+	for (let i = 0; i < customerData.length; i++) {
+		let data = customerData[i];
+		let password = bcrypt.hashSync(data['password'], salt);
+		let userObj = new user({
+			email: data.email,
+			password: password,
+			accountType: 'customer',
+			firstName: data.firstName,
+			lastName: data.lastName,
+		});
+
+		await userObj.save();
 	}
 }
 //create_petrolPumpData();
