@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const petrolPumpSchema = new Schema({
+const stationSchema = new Schema({
 	address: String,
 	location: {
 		type: {
@@ -19,4 +19,4 @@ const petrolPumpSchema = new Schema({
 	city: String,
 });
 
-module.exports = mongoose.model('petrolPump', petrolPumpSchema);
+module.exports = mongoose.model('station', stationSchema);

@@ -1,14 +1,24 @@
 const express = require('express');
 
-const { userController } = require('../controller');
-const { auth } = require('../middleware');
+const { userController, bookingController } = require('../controller');
+const { authMiddleware } = require('../middleware');
 
 module.exports = () => {
 	const router = express.Router();
 
 	router.post('/login', userController.loginUser);
 
-	router.post('/profile', auth, userController.saveProfileData);
+	//Saving profile image
+
+	router.post('/profile', authMiddleware, userController.saveProfileData);
+
+	//Create new booking for filling vehicle
+
+	router.post('/booking', authMiddleware, bookingController.createBooking);
+
+	//Get nearest stations for booking
+
+	router.get('/stations', authMiddleware, bookingController.getStations);
 
 	return router;
 };

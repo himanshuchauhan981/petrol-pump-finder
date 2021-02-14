@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const faker = require('faker');
 
-const { petrolPump, user } = require('../schemas');
+const { station, user } = require('../schemas');
 
 const url = `mongodb://127.0.0.1:27017/petrol_pump`;
 
@@ -28,121 +29,72 @@ const customerData = [
 	},
 ];
 
-const petrolPumpData = [
-	{
-		state: 'Punjab',
-		city: 'Chandigarh',
-		email: 'ramlal101@gmail.com',
-		password: 'ramlal',
-		address:
-			'Village POLOMAJRA, NH 95, LHS, CHANDIGARH LUDHIANA ROAD, KAHMANO DISTRICT FATEHGARH SAHIB (PB) PIN - 140801',
-		location: {
-			type: 'Point',
-			coordinates: [77.4520708, 28.68467],
-		},
-		firstName: 'Ram lal',
-		lastName: 'Mal',
-	},
-	{
-		state: 'Punjab',
-		city: 'Chandigarh',
-		address:
-			'BASSI PATHANA, WML, FATEHGARH MORIND ROAD, DISTRICT FATEHGARH (PB). PIN - 140412',
-		email: 'ramni.ranjan18@gmail.com',
-		password: 'ramni7784',
-		location: {
-			type: 'Point',
-			coordinates: [77.4520708, 20.68467],
-		},
-		firstName: 'Ramni',
-		lastName: 'Ranjan',
-	},
-	{
-		state: 'Punjab',
-		city: 'Chandigarh',
-		address:
-			'VILL. MACHCHRAIKALAN, TEHSIL. AMLOH, DISTT. FATEHGARH SAHIB (PB). PIN - 147203',
-		email: 'balwinderkaur@yahoo.com',
-		password: 'balwinderkaur',
-		location: {
-			type: 'Point',
-			coordinates: [77.4520708, 40.68467],
-		},
-		firstName: 'Balwinder',
-		lastName: 'Kaur',
-	},
-	{
-		state: 'Punjab',
-		city: 'Chandigarh',
-		address:
-			'NH21, LHS, ROPAR-CHANDIGARH ROAD,KURALI DISTT. ROPAR (PB). PIN - 140103',
-		location: {
-			type: 'Point',
-			coordinates: [-73.98185529999999, 40.7782266],
-		},
-		email: 'gschawla98@gmail.com',
-		password: 'gschawla0019',
-		firstName: 'G.S.',
-		lastName: 'Chawla',
-	},
-	{
-		state: 'Punjab',
-		city: 'Chandigarh',
-		address: 'PHASE 9, NEAR PCA STADIUM,SAS NAGAR,MOHALI,PUNJAB. PIN - 160059',
-		location: {
-			type: 'Point',
-			coordinates: [50.0257144, 22.3320424],
-		},
-		email: 'tejindersingh12@gmail.com',
-		password: 'tejinder1111',
-		firstName: 'Tejinder',
-		lastName: 'Singh',
-	},
-];
-
-async function create_petrol_pump_data() {
-	await petrol_pump.remove();
-	for (let i = 0; i < petrolPumpData.length; i++) {
-		let data = new petrol_pump(petrolPumpData[i]);
-		await data.save();
-	}
-	console.log('data created successfully');
-}
-
-async function query_petrol_pump() {
-	let data = await petrol_pump.find({
+async function queryStation() {
+	let data = await station.find({
 		location: {
 			$geoWithin: {
-				$centerSphere: [[76.4520708, 28.68467], 100 / 3963.2],
+				$centerSphere: [[20.4520708, 34.68467], 200 / 3963.2],
 			},
 		},
 	});
+
+	console.log(data.length);
+}
+
+let cities = [
+	'Ludhiana',
+	'Amristar',
+	'Patiala',
+	'Bathinda',
+	'Chandigarh',
+	'Mohali',
+];
+
+function getRandomNumber(min, max) {
+	return Math.random() * (max - min) + min;
 }
 
 async function createMockData() {
 	let salt = bcrypt.genSaltSync(10);
-	for (let i = 0; i < petrolPumpData.length; i++) {
-		let data = petrolPumpData[i];
-		let password = bcrypt.hashSync(data['password'], salt);
-		let userObj = new user({
-			email: data.email,
-			password: password,
-			accountType: 'dealer',
-			firstName: data.firstName,
-			lastName: data.lastName,
-		});
+	let first = 0;
+	let last = 20;
 
-		let newUser = await userObj.save();
+	for (let i = 0; i < cities.length; i++) {
+		for (let j = 0; j < 20; j++) {
+			let firstName = faker.name.firstName();
+			let lastName = faker.name.lastName();
+			let email = `${firstName}.${lastName}@gmail.com`;
 
-		let petrolPumpObj = new petrolPump({
-			address: data.address,
-			dealer: data.dealer,
-			location: data.location,
-			state: data.state,
-			city: data.city,
-			userId: newUser._id,
-		});
-		await petrolPumpObj.save();
+			let password = bcrypt.hashSync('samplePassword', salt);
+
+			let userObj = new user({
+				email: email,
+				password: password,
+				accountType: 'dealer',
+				firstName: firstName,
+				lastName: lastName,
+			});
+
+			let newUser = await userObj.save();
+
+			let stationObj = new station({
+				address: faker.address.streetAddress(),
+				location: {
+					type: 'Point',
+					coordinates: [
+						getRandomNumber(first, last),
+						getRandomNumber(first, last),
+					],
+				},
+				state: 'Punjab',
+				city: cities[i],
+				userId: newUser._id,
+			});
+
+			await stationObj.save();
+		}
+		first = last;
+		last = last + 20;
 	}
 
 	for (let i = 0; i < customerData.length; i++) {
@@ -159,6 +111,7 @@ async function createMockData() {
 		await userObj.save();
 	}
 }
-//create_petrolPumpData();
 
 createMockData();
+
+// queryStation();
