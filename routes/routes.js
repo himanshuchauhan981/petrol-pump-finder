@@ -6,6 +6,8 @@ const { authMiddleware } = require('../middleware');
 module.exports = () => {
 	const router = express.Router();
 
+	//Login station dealer or customer
+
 	router.post('/login', userController.loginUser);
 
 	//Saving profile image
@@ -19,6 +21,14 @@ module.exports = () => {
 	//Get nearest stations for booking
 
 	router.get('/stations', authMiddleware, bookingController.getStations);
+
+	// Get particular station booking
+
+	router.get(
+		'/station/:stationId/bookings',
+		authMiddleware,
+		bookingController.viewStationBooking
+	);
 
 	return router;
 };

@@ -1,4 +1,5 @@
 const { station, booking } = require('../schemas');
+const ObjectId = require('mongodb').ObjectId;
 
 const bookings = {
 	createBooking: async (bookingDetails, userId) => {
@@ -46,6 +47,31 @@ const bookings = {
 		if (stations.length === 0)
 			return { status: 200, data: { msg: 'No nearest stations available' } };
 		else return { status: 200, data: stations };
+	},
+
+	viewStationBooking: async (stationId) => {
+		stationId = new ObjectId(stationId);
+		let stationBookingDetails = await booking.aggregate([
+			{
+				$match: { stationId },
+			},
+			{
+				$lookup: {
+					from: 'users',
+					localField: 'userId',
+					foreignField: '_id',
+					as: 'userData',
+				},
+			},
+			{
+				$project: {
+					vehicles: 1,
+					'userData.firstName': 1,
+					'userData.lastName': 1,
+				},
+			},
+		]);
+		return { status: 200, data: stationBookingDetails };
 	},
 };
 

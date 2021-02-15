@@ -3,7 +3,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const stationSchema = new Schema({
-	address: String,
+	address: {
+		type: String,
+		required: true,
+	},
 	location: {
 		type: {
 			type: String,
@@ -15,8 +18,18 @@ const stationSchema = new Schema({
 			required: true,
 		},
 	},
-	state: String,
-	city: String,
+	state: {
+		type: String,
+		required: true,
+	},
+	city: {
+		type: String,
+		required: true,
+	},
+	userId: {
+		type: Schema.Types.ObjectId,
+		required: true,
+	},
 });
 
 module.exports = mongoose.model('station', stationSchema);

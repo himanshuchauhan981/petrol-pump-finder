@@ -110,6 +110,8 @@ async function createMockData() {
 
 		await userObj.save();
 	}
+
+	console.log('created data successfully');
 }
 
 createMockData();
